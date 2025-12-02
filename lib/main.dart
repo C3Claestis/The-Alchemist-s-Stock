@@ -1,4 +1,4 @@
-import 'package:alchemiststock/page/splashscreen_page.dart';
+import 'package:alchemiststock/page/RegisterLoginPage/splashscreen_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {

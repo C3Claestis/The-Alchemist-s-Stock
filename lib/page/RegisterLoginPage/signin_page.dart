@@ -1,4 +1,4 @@
-import 'package:alchemiststock/page/enternumber_page.dart';
+import 'package:alchemiststock/page/RegisterLoginPage/enternumber_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
@@ -32,7 +32,7 @@ class SigninPage extends StatelessWidget {
                 const Gap(30),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (_) => const EnternumberPage()),
                     );

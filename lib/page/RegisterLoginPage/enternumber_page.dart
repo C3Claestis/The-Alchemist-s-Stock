@@ -1,4 +1,4 @@
-import 'package:alchemiststock/page/verifnumber_page.dart';
+import 'package:alchemiststock/page/RegisterLoginPage/verifnumber_page.dart';
 import 'package:alchemiststock/widget/template_sigin.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -98,7 +98,7 @@ class _EnternumberPageState extends State<EnternumberPage> {
   }
 
   void _goToNextPage() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const VerifnumberPage()),
     );

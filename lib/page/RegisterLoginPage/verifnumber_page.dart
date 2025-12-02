@@ -1,4 +1,4 @@
-import 'package:alchemiststock/page/selectlocation_page.dart';
+import 'package:alchemiststock/page/RegisterLoginPage/selectlocation_page.dart';
 import 'package:alchemiststock/services/_OtpInputState.dart';
 import 'package:alchemiststock/widget/template_sigin.dart';
 import 'package:flutter/material.dart';
@@ -94,7 +94,7 @@ class _VerifnumberPageState extends State<VerifnumberPage> {
     );
   }
    void _goToNextPage() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const SelectlocationPage()),
     );

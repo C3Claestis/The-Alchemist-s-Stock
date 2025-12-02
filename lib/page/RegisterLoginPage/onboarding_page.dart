@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:alchemiststock/page/signin_page.dart';
+import 'package:alchemiststock/page/RegisterLoginPage/signin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
