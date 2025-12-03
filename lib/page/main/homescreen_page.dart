@@ -19,35 +19,32 @@ class _HomescreenPageState extends State<HomescreenPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _logoIcon(),
-              const Gap(8),
-              _locationHeader(),
-              const Gap(18),
-              _searchBar(),
-              const Gap(20),
-              PromoBanner(),
-              const Gap(30),
-              _contentTitleTxt("Exclusive Offer"),
-              const Gap(20),
-              _contentCard(),
-              const Gap(30),
-              _contentTitleTxt("Best Selling"),
-              const Gap(20),
-              _contentCard(),
-              const Gap(30),
-              _contentTitleTxt("Groceries"),
-              const Gap(20),
-              _contentCardRare(),
-              const Gap(20),
-              _contentCard(),
-            ],
-          ),
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            _logoIcon(),
+            const Gap(8),
+            _locationHeader(),
+            const Gap(18),
+            _searchBar(),
+            const Gap(20),
+            PromoBanner(),
+            const Gap(30),
+            _contentTitleTxt("Exclusive Offer"),
+            const Gap(20),
+            _contentCard(),
+            const Gap(30),
+            _contentTitleTxt("Best Selling"),
+            const Gap(20),
+            _contentCard(),
+            const Gap(30),
+            _contentTitleTxt("Groceries"),
+            const Gap(20),
+            _contentCardRare(),
+            const Gap(20),
+            _contentCard(),
+          ],
         ),
       ),
     );
