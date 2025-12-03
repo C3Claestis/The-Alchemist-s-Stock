@@ -2,6 +2,7 @@
 
 import 'package:alchemiststock/page/RegisterLoginPage/signin_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -10,6 +11,14 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent, // transparan
+        statusBarIconBrightness: Brightness.dark, // icon gelap
+        statusBarBrightness: Brightness.light,
+      ),
+    );
+
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
