@@ -1,5 +1,5 @@
 import 'package:alchemiststock/page/RegisterLoginPage/verifnumber_page.dart';
-import 'package:alchemiststock/widget/template_sigin.dart';
+import 'package:alchemiststock/widget/widget_template_sigin.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';

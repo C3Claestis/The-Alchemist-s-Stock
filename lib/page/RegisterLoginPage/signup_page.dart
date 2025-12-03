@@ -1,6 +1,7 @@
 import 'package:alchemiststock/page/RegisterLoginPage/login_page.dart';
+import 'package:alchemiststock/page/RegisterLoginPage/privacyPolicy_page.dart';
 import 'package:alchemiststock/page/RegisterLoginPage/termservice_page.dart';
-import 'package:alchemiststock/widget/template_sigin.dart';
+import 'package:alchemiststock/widget/widget_template_sigin.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -245,7 +246,7 @@ class _SignupPageState extends State<SignupPage> {
               ..onTap = () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const SignupPage()),
+                  MaterialPageRoute(builder: (_) => const PrivacypolicyPage()),
                 ); // aksi klik
               },
           ),

@@ -1,5 +1,6 @@
+import 'package:alchemiststock/page/Content/homescreen_page.dart';
 import 'package:alchemiststock/page/RegisterLoginPage/signup_page.dart';
-import 'package:alchemiststock/widget/template_sigin.dart';
+import 'package:alchemiststock/widget/widget_template_sigin.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -237,7 +238,7 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const LoginPage()),
+          MaterialPageRoute(builder: (_) => const HomescreenPage()),
         );
       },
       style: ElevatedButton.styleFrom(
