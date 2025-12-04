@@ -12,6 +12,7 @@ dependencies:
   gap: ^3.0.1
   google_fonts: ^6.3.2
   flutter_svg: ^2.2.3  
+  intl_phone_field: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -24,6 +25,5 @@ flutter:
   assets:
     - assets/images/    
     - assets/images/product/    
-    - assets/svgs/
-    - assets/svgs/flag/
-    - assets/data/countries.json
+    - assets/svgs/    
+    

@@ -1,14 +1,11 @@
 // ignore_for_file: avoid_print
-
-import 'dart:convert';
 import 'package:alchemiststock/page/RegisterLoginPage/verifnumber_page.dart';
 import 'package:alchemiststock/services/_PhoneController.dart';
 import 'package:alchemiststock/widget/widget_template_sigin.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class EnternumberPage extends StatefulWidget {
   final PhoneController controller;
@@ -22,8 +19,6 @@ class EnternumberPage extends StatefulWidget {
 class _EnternumberPageState extends State<EnternumberPage> {
   late PhoneController phoneCtrl;
 
-  List<Map<String, dynamic>> countries = [];
-
   @override
   void initState() {
     super.initState();
@@ -33,48 +28,6 @@ class _EnternumberPageState extends State<EnternumberPage> {
     phoneCtrl.onNumberChanged = (value) {
       print("Nomor berubah: $value");
     };
-
-    _loadCountriesJson();
-  }
-
-  Future<void> _loadCountriesJson() async {
-    final String response = await rootBundle.loadString(
-      'assets/data/countries.json',
-    );
-    final data = json.decode(response);
-
-    setState(() {
-      countries = List<Map<String, dynamic>>.from(data);
-    });
-  }
-
-  // Default Indonesia
-  String selectedFlag = "id";
-  String selectedCode = "+62";
-
-  void openCountryPicker() {
-    showModalBottomSheet(
-      context: context,
-      builder: (_) => ListView(
-        children: countries.map((c) {
-          return ListTile(
-            leading: SvgPicture.asset(
-              "assets/svgs/flag/${c['code']}.svg",
-              width: 28,
-            ),
-            title: Text(c["name"]),
-            trailing: Text(c["dial_code"]),
-            onTap: () {
-              setState(() {
-                selectedFlag = c["code"]; // perbaikan
-                selectedCode = c["dial_code"]; // perbaikan
-              });
-              Navigator.pop(context);
-            },
-          );
-        }).toList(),
-      ),
-    );
   }
 
   @override
@@ -82,7 +35,6 @@ class _EnternumberPageState extends State<EnternumberPage> {
     return TemplateSigin(
       child: Stack(
         children: [
-          // KONTEN UTAMA
           Positioned(
             top: 64,
             left: 20,
@@ -96,48 +48,28 @@ class _EnternumberPageState extends State<EnternumberPage> {
                 const Gap(26),
                 _instructionTxt(),
                 const Gap(10),
-                TextField(
-                  controller: widget.controller.numberController,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 10),
-                    prefixIcon: GestureDetector(
-                      onTap: openCountryPicker,
-                      behavior: HitTestBehavior.translucent,
-                      child: Container(
-                        padding: EdgeInsets.only(right: 8),                        // atau sesuai kebutuhan
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              "assets/svgs/flag/$selectedFlag.svg",
-                              width: 24,
-                            ),
-                            const Gap(4),
-                            Text(selectedCode, style: GoogleFonts.roboto(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
-                            )),
-                          ],
-                        ),
-                      ),
-                    ),
 
-                    prefixIconConstraints: BoxConstraints(
-                      minWidth: 0,
-                      maxWidth: 110,
-                    ),
+                /// ==== GANTI INI ====
+                IntlPhoneField(
+                  controller: widget.controller.numberController,
+                  initialCountryCode: 'ID',
+                  decoration: InputDecoration(
+                    labelText: "Phone Number",
+                    isDense: true,
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Color(0xFFE2E2E2)),
                     ),
                   ),
+                  onChanged: (phone) {
+                    phoneCtrl.onNumberChanged?.call(phone.completeNumber);
+                  },
                 ),
+
+                /// ====================
               ],
             ),
           ),
-          // BUTTON KANAN BAWAH
+
           _nextBtn(context),
         ],
       ),
