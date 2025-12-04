@@ -12,10 +12,56 @@ class FindproductPage extends StatefulWidget {
 
 class _FindproductPageState extends State<FindproductPage> {
   final List<Map<String, dynamic>> products = [
-    {"title": "Peti", "img": "assets/images/product/peti.png", "color": Colors.blue},
-    {"title": "Kue", "img": "assets/images/product/Kue.png", "color": Colors.green},
-    {"title": "Potion", "img": "assets/images/product/Potion.png", "color": Colors.brown},
-    {"title": "Santet", "img": "assets/images/product/Santet.png", "color": Colors.yellow.shade400},
+    {
+      "title": "Arcane Microscope",
+      "img": "assets/images/product/peti.png",
+      "color": Colors.blue,
+    },
+    {
+      "title": "Spirit Vial",
+      "img": "assets/images/product/Kue.png",
+      "color": Colors.green,
+    },
+    {
+      "title": "Elixir Mixer",
+      "img": "assets/images/product/Potion.png",
+      "color": Colors.brown,
+    },
+    {
+      "title": "Soul Condenser",
+      "img": "assets/images/product/Santet.png",
+      "color": Colors.yellow.shade400,
+    },
+    {
+      "title": "Runic Burner",
+      "img": "assets/images/product/Skell.png",
+      "color": Colors.purple,
+    },
+    {
+      "title": "Ethereal Funnel",
+      "img": "assets/images/product/Ilu.png",
+      "color": Colors.orange,
+    },
+    {
+      "title": "Elemental Extractor",
+      "img": "assets/images/product/Pulu1.png",
+      "color": Colors.red,
+    },
+    {
+      "title": "Cauldron of Transmutation",
+      "img": "assets/images/product/Cekerayam.png",
+      "color": Colors.cyan,
+    },
+    {
+      "title": "Alembic",
+      "img": "assets/images/product/Star.png",
+      "color": Colors.greenAccent,
+    },
+    {
+      "title": "Mana Conductor",
+      "img": "assets/images/product/lilin.png",
+      "color": Colors.blueGrey,
+    },
   ];
 
   @override
@@ -23,44 +69,52 @@ class _FindproductPageState extends State<FindproductPage> {
     return SafeArea(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Find Products',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
+          _header(),
           const Gap(30),
           _searchBar(),
           const Gap(20),
-          Expanded(
-            child: SizedBox(
-              width: 364,            
-              child: GridView.builder(
-                itemCount: products.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // grid 2 kolom
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,                  
-                ),
-                itemBuilder: (context, index) {
-                  return BatchProduct(
-                    title: products[index]["title"],
-                    img: products[index]["img"],
-                    coloring: products[index]["color"],
-                  );
-                },
-              ),
-            ),
-          ),
+          _content(),
         ],
       ),
+    );
+  }
+
+  Expanded _content() {
+    return Expanded(
+      child: SizedBox(
+        width: 364,
+        child: GridView.builder(
+          itemCount: products.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // grid 2 kolom
+            crossAxisSpacing: 15,
+            mainAxisSpacing: 15,
+          ),
+          itemBuilder: (context, index) {
+            return BatchProduct(
+              title: products[index]["title"],
+              img: products[index]["img"],
+              coloring: products[index]["color"],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Row _header() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Find Products',
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 
