@@ -94,7 +94,7 @@ class _VerifnumberPageState extends State<VerifnumberPage> {
     );
   }
    void _goToNextPage() {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const SelectlocationPage()),
     );

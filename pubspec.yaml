@@ -25,3 +25,5 @@ flutter:
     - assets/images/    
     - assets/images/product/    
     - assets/svgs/
+    - assets/svgs/flag/
+    - assets/data/countries.json

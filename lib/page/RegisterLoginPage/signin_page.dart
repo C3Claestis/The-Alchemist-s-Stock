@@ -1,4 +1,5 @@
 import 'package:alchemiststock/page/RegisterLoginPage/enternumber_page.dart';
+import 'package:alchemiststock/services/_PhoneController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,19 +25,15 @@ class SigninPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Get your groceries \nwith Alchemist's Store",
-                  style: GoogleFonts.poppins(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                _headerTxt(),
                 const Gap(30),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const EnternumberPage()),
+                      MaterialPageRoute(
+                        builder: (_) => EnternumberPage(controller: PhoneController()),
+                      ),
                     );
                   },
                   child: Container(
@@ -48,29 +45,29 @@ class SigninPage extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(right: 8.0),
-                          child: Icon(Icons.flag,
-                              color: Color(0xFF7C7C7C), size: 24),
+                          child: SvgPicture.asset(
+                            'assets/svgs/flag/id.svg',
+                            height: 24,
+                            width: 24,
+                          ),
                         ),
                         Text(
                           '+62',
-                          style:
-                              const TextStyle(color: Color(0xFF7C7C7C), fontSize: 16),
+                          style: GoogleFonts.roboto(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),
                   ),
                 ),
                 const Gap(40),
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    "Or connect with social media",
-                    style: GoogleFonts.poppins(fontSize: 11),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                _sosmedConnectTxt(),
                 const Gap(38),
                 _googleButton(),
                 const Gap(20),
@@ -80,6 +77,24 @@ class SigninPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  SizedBox _sosmedConnectTxt() {
+    return SizedBox(
+      width: double.infinity,
+      child: Text(
+        "Or connect with social media",
+        style: GoogleFonts.poppins(fontSize: 11),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Text _headerTxt() {
+    return Text(
+      "Get your groceries \nwith Alchemist's Store",
+      style: GoogleFonts.poppins(fontSize: 26, fontWeight: FontWeight.w600),
     );
   }
 
@@ -102,7 +117,7 @@ class SigninPage extends StatelessWidget {
           // TEKS DI TENGAH (pakai Expanded + Center)
           Expanded(
             child: Center(
-              child: Text( 
+              child: Text(
                 'Continue with Google',
                 style: TextStyle(
                   fontSize: 16,
@@ -157,5 +172,3 @@ class SigninPage extends StatelessWidget {
     );
   }
 }
-
-
