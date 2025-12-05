@@ -236,9 +236,10 @@ class _LoginPageState extends State<LoginPage> {
   ElevatedButton _btnSubmit(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => const MainNavigationPage()),
+          (Route<dynamic> route) => false, // Hapus semua route
         );
       },
       style: ElevatedButton.styleFrom(

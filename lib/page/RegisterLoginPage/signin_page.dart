@@ -48,7 +48,7 @@ class SigninPage extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.only(right: 8.0),
                           child: SvgPicture.asset(
-                            'assets/svgs/flag/id.svg',
+                            'assets/svgs/id.svg',
                             height: 24,
                             width: 24,
                           ),

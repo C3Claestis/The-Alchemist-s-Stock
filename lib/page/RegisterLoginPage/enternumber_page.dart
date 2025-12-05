@@ -48,8 +48,7 @@ class _EnternumberPageState extends State<EnternumberPage> {
                 const Gap(26),
                 _instructionTxt(),
                 const Gap(10),
-
-                /// ==== GANTI INI ====
+                
                 IntlPhoneField(
                   controller: widget.controller.numberController,
                   initialCountryCode: 'ID',
