@@ -1,0 +1,26 @@
+[
+    {        
+        "name": "Potions"
+    },
+    {        
+        "name": "Elixirs"
+    },
+    {        
+        "name": "Ingredients"
+    },
+    {        
+        "name": "Herbs"
+    },
+    {        
+        "name": "Magical Tools"
+    },
+    {        
+        "name": "Scrolls"
+    },   
+    {        
+        "name": "Crystals"
+    },   
+    {        
+        "name": "Rare Artifacts"
+    }   
+]

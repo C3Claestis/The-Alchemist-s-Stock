@@ -1,11 +1,15 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:alchemiststock/model/category.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ProductRare extends StatelessWidget {
-  const ProductRare({super.key});
+class ProductCategory extends StatelessWidget {
+  final CategoryModel category;
+  final Color color;
+
+  const ProductCategory({super.key, required this.category, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +17,8 @@ class ProductRare extends StatelessWidget {
       width: 248,
       height: 105,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: BoxBorder.all(color: Colors.grey.shade300, width: 1),        
-        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),             
+        color: color.withOpacity(0.3),
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -28,8 +31,8 @@ class ProductRare extends StatelessWidget {
               height: 84,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/Chisa.jpeg'),
-                  fit: BoxFit.cover,
+                  image: AssetImage('assets/images/batch/${category.name}.png'),
+                  fit: BoxFit.contain,
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -37,7 +40,7 @@ class ProductRare extends StatelessWidget {
             const Gap(14),
             Expanded(
               child: Text(
-                'Chisa my bini dari dulu',
+                category.name,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   color: Colors.black,

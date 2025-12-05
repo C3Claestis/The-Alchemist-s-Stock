@@ -1,6 +1,8 @@
+import 'package:alchemiststock/model/category.dart';
 import 'package:alchemiststock/model/product.dart';
+import 'package:alchemiststock/services/_category_service.dart';
 import 'package:alchemiststock/services/_product_service.dart';
-import 'package:alchemiststock/widget/widget_product_rare.dart';
+import 'package:alchemiststock/widget/widget_product_category.dart';
 import 'package:alchemiststock/widget/widget_product_sell.dart';
 import 'package:alchemiststock/widget/widget_promo_banner.dart';
 import 'package:flutter/material.dart';
@@ -16,22 +18,36 @@ class HomescreenPage extends StatefulWidget {
 }
 
 class _HomescreenPageState extends State<HomescreenPage> {
-  late Future<List<Product>> futureProducts;
+  late Future<List<CategoryModel>> futureCategory;
+  late Future<List<ProductModel>> futureProducts;
 
   String zone = 'Jawa Barat';
   String area = 'Bogor';
 
+  final List<Color> categoryColors = [
+    Color(0xFFEF5350), // Red
+    Color(0xFFAB47BC), // Purple
+    Color(0xFF5C6BC0), // Indigo
+    Color(0xFF29B6F6), // Light Blue
+    Color(0xFF26A69A), // Teal
+    Color(0xFF9CCC65), // Light Green
+    Color(0xFFFFCA28), // Amber
+    Color(0xFFFF7043), // Orange
+  ];
+
   @override
   void initState() {
     super.initState();
-    futureProducts = ProductService().getProducts();  // ← ambil data API di sini
+    futureProducts = ProductService().getProducts(); // ← ambil data API di sini
+    futureCategory = CategoryService()
+        .getCategories(); // ← ambil data JSON di sini
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
-        child: Column(          
+        child: Column(
           children: [
             _logoIcon(),
             const Gap(8),
@@ -41,7 +57,7 @@ class _HomescreenPageState extends State<HomescreenPage> {
             const Gap(20),
             PromoBanner(),
             const Gap(30),
-            FutureBuilder<List<Product>>(
+            FutureBuilder<List<ProductModel>>(
               future: futureProducts,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -73,7 +89,7 @@ class _HomescreenPageState extends State<HomescreenPage> {
                     const Gap(30),
                     _contentTitleTxt("Groceries"),
                     const Gap(20),
-                    _contentCardRare(),
+                    _contentCardCategory(),
                     const Gap(20),
                     _contentCard(products, start: 10, end: 15),
                   ],
@@ -86,25 +102,56 @@ class _HomescreenPageState extends State<HomescreenPage> {
     );
   }
 
-  Padding _contentCardRare() {
+  Widget _contentCardCategory() {
+    return FutureBuilder<List<CategoryModel>>(
+      future: futureCategory,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 40),
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        }
+
+        final categories = snapshot.data ?? [];
+
+        return _categoryList(categories);
+      },
+    );
+  }
+
+  Padding _categoryList(List<CategoryModel> data) {
     return Padding(
       padding: const EdgeInsets.only(left: 24),
       child: SizedBox(
         height: 105,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) => ProductRare(),
+          itemBuilder: (context, index) {
+            return ProductCategory(
+              category: data[index],
+              color: categoryColors[index % categoryColors.length],
+            );
+          },
           separatorBuilder: (context, index) => const Gap(14),
-          itemCount: 3,
+          itemCount: data.length >= 3 ? 3 : data.length,
         ),
       ),
     );
   }
 
-  Padding _contentCard(List<Product> products, {int start = 0, int? end}) {
+  Padding _contentCard(List<ProductModel> products, {int start = 0, int? end}) {
     // Ambil sublist dari produk berdasarkan rentang start dan end
     // Pastikan rentang tidak melebihi panjang list
-    final int effectiveEnd = (end != null && end <= products.length) ? end : products.length;
+    final int effectiveEnd = (end != null && end <= products.length)
+        ? end
+        : products.length;
     final displayedProducts = products.sublist(start, effectiveEnd);
 
     return Padding(

@@ -8,7 +8,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProductSell extends StatelessWidget {
-  final Product product;
+  final ProductModel product;
 
   const ProductSell({super.key, required this.product});
 
