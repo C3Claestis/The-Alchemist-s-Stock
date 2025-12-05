@@ -1,3 +1,5 @@
+import 'package:alchemiststock/model/product.dart';
+import 'package:alchemiststock/services/_product_service.dart';
 import 'package:alchemiststock/widget/widget_product_rare.dart';
 import 'package:alchemiststock/widget/widget_product_sell.dart';
 import 'package:alchemiststock/widget/widget_promo_banner.dart';
@@ -14,14 +16,22 @@ class HomescreenPage extends StatefulWidget {
 }
 
 class _HomescreenPageState extends State<HomescreenPage> {
+  late Future<List<Product>> futureProducts;
+
   String zone = 'Jawa Barat';
   String area = 'Bogor';
+
+  @override
+  void initState() {
+    super.initState();
+    futureProducts = ProductService().getProducts();  // ← ambil data API di sini
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
-        child: Column(
+        child: Column(          
           children: [
             _logoIcon(),
             const Gap(8),
@@ -31,19 +41,45 @@ class _HomescreenPageState extends State<HomescreenPage> {
             const Gap(20),
             PromoBanner(),
             const Gap(30),
-            _contentTitleTxt("Exclusive Offer"),
-            const Gap(20),
-            _contentCard(),
-            const Gap(30),
-            _contentTitleTxt("Best Selling"),
-            const Gap(20),
-            _contentCard(),
-            const Gap(30),
-            _contentTitleTxt("Groceries"),
-            const Gap(20),
-            _contentCardRare(),
-            const Gap(20),
-            _contentCard(),
+            FutureBuilder<List<Product>>(
+              future: futureProducts,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 100),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                }
+
+                final products = snapshot.data ?? [];
+
+                // Pindahkan semua widget yang butuh data 'products' ke sini
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _contentTitleTxt("Exclusive Offer"),
+                    const Gap(20),
+                    _contentCard(products, start: 0, end: 5),
+                    const Gap(30),
+                    _contentTitleTxt("Best Selling"),
+                    const Gap(20),
+                    _contentCard(products, start: 5, end: 10),
+                    const Gap(30),
+                    _contentTitleTxt("Groceries"),
+                    const Gap(20),
+                    _contentCardRare(),
+                    const Gap(20),
+                    _contentCard(products, start: 10, end: 15),
+                  ],
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -65,16 +101,25 @@ class _HomescreenPageState extends State<HomescreenPage> {
     );
   }
 
-  Padding _contentCard() {
+  Padding _contentCard(List<Product> products, {int start = 0, int? end}) {
+    // Ambil sublist dari produk berdasarkan rentang start dan end
+    // Pastikan rentang tidak melebihi panjang list
+    final int effectiveEnd = (end != null && end <= products.length) ? end : products.length;
+    final displayedProducts = products.sublist(start, effectiveEnd);
+
     return Padding(
       padding: const EdgeInsets.only(left: 24),
       child: SizedBox(
         height: 248,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) => ProductSell(),
+          itemBuilder: (context, index) {
+            // Ambil produk dari list yang sudah difilter
+            final product = displayedProducts[index];
+            return ProductSell(product: product);
+          },
           separatorBuilder: (context, index) => const Gap(14),
-          itemCount: 3,
+          itemCount: displayedProducts.length, // Sesuaikan jumlah item
         ),
       ),
     );

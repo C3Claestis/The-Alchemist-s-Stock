@@ -1,8 +1,12 @@
 import 'package:alchemiststock/page/RegisterLoginPage/splashscreen_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
-  runApp(const MainApp());
+Future<void> main() async {
+  // Muat file .env
+  await dotenv.load(fileName: "API_KEY.env"); 
+  
+  runApp(const MainApp()); // Ganti MyApp dengan widget root aplikasi Anda
 }
 
 class MainApp extends StatelessWidget {

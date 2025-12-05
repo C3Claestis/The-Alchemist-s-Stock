@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:alchemiststock/model/product.dart';
 import 'package:alchemiststock/page/Content/productdetail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,7 +8,9 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProductSell extends StatelessWidget {
-  const ProductSell({super.key});
+  final Product product;
+
+  const ProductSell({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +40,17 @@ class ProductSell extends StatelessWidget {
                 height: 124,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/Chisa.jpeg'),
-                    fit: BoxFit.cover,
+                    image: AssetImage('assets/images/product/${product.image}.png'),
+                    fit: BoxFit.contain,
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               const Gap(8),
               Text(
-                'Chisa my bini',
+                product.name,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   color: Colors.black,
@@ -53,7 +58,7 @@ class ProductSell extends StatelessWidget {
                 ),
               ),
               Text(
-                '1pcs, Price',
+                "${product.quantity}${product.unit}, Price",
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   color: Colors.grey.shade700,
@@ -63,7 +68,7 @@ class ProductSell extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '\$4.99',
+                     "\$${product.price.toStringAsFixed(2)}",
                     style: GoogleFonts.roboto(
                       fontSize: 16,
                       color: Colors.black,
