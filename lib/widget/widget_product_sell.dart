@@ -18,7 +18,7 @@ class ProductSell extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const ProductdetailPage()),
+          MaterialPageRoute(builder: (_) => ProductdetailPage(product: product)),
         );
       },
       child: Container(
@@ -76,7 +76,7 @@ class ProductSell extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: null,
                     icon: SvgPicture.asset(
                       'assets/svgs/add.svg',
                       height: 16,

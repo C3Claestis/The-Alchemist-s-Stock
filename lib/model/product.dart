@@ -8,6 +8,7 @@ class ProductModel {
   final int quantity;
   final String unit;
   int get image => id;
+  int count;
 
   ProductModel({
     required this.id,
@@ -18,6 +19,7 @@ class ProductModel {
     required this.quantity,
     required this.description,    
     required this.unit,
+    this.count = 1
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {

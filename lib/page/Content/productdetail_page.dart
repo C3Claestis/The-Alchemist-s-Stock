@@ -1,23 +1,25 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, prefer_interpolation_to_compose_strings
 
 import 'dart:ui';
-
+import 'package:alchemiststock/model/product.dart';
 import 'package:alchemiststock/services/_CustomExpand.dart';
+import 'package:alchemiststock/services/_cart_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProductdetailPage extends StatefulWidget {
-  const ProductdetailPage({super.key});
+  final ProductModel product;
+
+  const ProductdetailPage({super.key, required this.product});
 
   @override
   State<ProductdetailPage> createState() => _ProductdetailPageState();
 }
 
 class _ProductdetailPageState extends State<ProductdetailPage> {
-  String description =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+  int _count = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class _ProductdetailPageState extends State<ProductdetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _imageProduct("assets/images/product/peti.png"),
+            _imageProduct("assets/images/product/${widget.product.id}.png"),
             const Gap(18),
             _headerNameProduct(),
             const Gap(18),
@@ -39,14 +41,7 @@ class _ProductdetailPageState extends State<ProductdetailPage> {
             const Gap(8),
             _garisPembatas(),
             const Gap(8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: CustomExpand(
-                tittle: "Lore",
-                description: description,
-                type: ExpandType.lore,
-              ),
-            ),
+            _lore(),
             const Gap(8),
             _garisPembatas(),
             const Gap(8),
@@ -54,7 +49,7 @@ class _ProductdetailPageState extends State<ProductdetailPage> {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: CustomExpand(
                 tittle: "Review",
-                description: description,
+                description: widget.product.description,
                 type: ExpandType.review,
               ),
             ),
@@ -67,12 +62,23 @@ class _ProductdetailPageState extends State<ProductdetailPage> {
     );
   }
 
+  Padding _lore() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: CustomExpand(
+        tittle: "Lore",
+        description: widget.product.lore,
+        type: ExpandType.lore,
+      ),
+    );
+  }
+
   Padding _productDetail() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: CustomExpand(
         tittle: "Product Detail",
-        description: description,
+        description: widget.product.description,
         type: ExpandType.normal,
       ),
     );
@@ -152,33 +158,38 @@ class _ProductdetailPageState extends State<ProductdetailPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          RichText(
-            text: TextSpan(
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextSpan(
-                  text: 'Chisasa',
+                Text(
+                  widget.product.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(
                     fontSize: 22,
                     color: Colors.black,
                     fontWeight: FontWeight.w600,
                   ),
-                  children: [
-                    TextSpan(
-                      text: '\n1pcs, Price',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.grey.shade700,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
+                ),
+                Text(
+                  '${widget.product.quantity}${widget.product.unit}, Price',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: Colors.grey.shade700,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ],
             ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('assets/svgs/heart.svg'),
+
+          Padding(
+            padding: const EdgeInsets.only(bottom: 24.0),
+            child: IconButton(
+              onPressed: () {},
+              icon: SvgPicture.asset('assets/svgs/heart.svg'),
+            ),
           ),
         ],
       ),
@@ -193,19 +204,29 @@ class _ProductdetailPageState extends State<ProductdetailPage> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              IconButton(onPressed: () {}, icon: Icon(Icons.remove, size: 28)),
+              InkWell(
+                onTap: () {
+                  if (_count > 1) {
+                    setState(() {
+                      _count--;
+                    });
+                  }
+                },
+                child: const Icon(Icons.remove, size: 28),
+              ),
+              const Gap(12),
               Container(
                 alignment: Alignment.center,
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: Text(
-                  '1',
+                  '$_count',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.roboto(
                     fontSize: 18,
@@ -213,14 +234,23 @@ class _ProductdetailPageState extends State<ProductdetailPage> {
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.add, color: Color(0xFF53B175), size: 28),
+              const Gap(12),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    _count++;
+                  });
+                },
+                child: const Icon(
+                  Icons.add,
+                  color: Color(0xFF53B175),
+                  size: 28,
+                ),
               ),
             ],
           ),
           Text(
-            '\$4.99',
+            "\$${widget.product.price.toStringAsFixed(2)}",
             style: GoogleFonts.roboto(
               fontSize: 22,
               color: Colors.black,
@@ -244,10 +274,17 @@ class _ProductdetailPageState extends State<ProductdetailPage> {
   ElevatedButton _buttonSubmit(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(builder: (_) => const ),
-        // );
+        CartService.addToCart(widget.product, count: _count);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Added $_count item${_count > 1 ? 's' : ''} to cart!",
+            ),
+          ),
+        );
+
+        Navigator.pop(context);
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF53B175),

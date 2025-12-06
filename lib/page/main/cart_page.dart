@@ -1,3 +1,4 @@
+import 'package:alchemiststock/services/_cart_service.dart';
 import 'package:alchemiststock/widget/widget_cartProduct.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -11,6 +12,12 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  final cart = CartService.getCart();
+
+  double _calculateTotalPrice() {
+    return cart.fold(0.0, (sum, item) => sum + (item.price * item.count));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -20,19 +27,21 @@ class _CartPageState extends State<CartPage> {
           const Gap(32),
           Divider(height: 1),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  CartProduct(),
-                  CartProduct(),
-                  CartProduct(),
-                  CartProduct(),
-                  CartProduct(),
-                  CartProduct(),
-                  CartProduct(),
-                  CartProduct(),
-                ],
-              ),
+            child: ListView.builder(
+              itemCount: cart.length,
+              itemBuilder: (context, index) {
+                return CartProduct(
+                  product: cart[index],
+                  onRemove: () {
+                    setState(() {
+                      CartService.removeFromCart(cart[index]);
+                    });
+                  },
+                  onCountChanged: (newCount) {
+                    setState(() {}); // rebuild CartPage agar total price update
+                  },
+                );
+              },
             ),
           ),
           _buttonSubmit(context),
@@ -96,7 +105,7 @@ class _CartPageState extends State<CartPage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '\$409.99',
+                  '\$${_calculateTotalPrice().toStringAsFixed(2)}',
                   style: GoogleFonts.urbanist(
                     fontSize: 14,
                     color: Colors.white,

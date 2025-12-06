@@ -24,7 +24,6 @@ class BatchProduct extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       onTap: () {
         // aksi ketika ditekan
-      
       },
       child: Container(
         width: 175,
@@ -41,12 +40,27 @@ class BatchProduct extends StatelessWidget {
             SizedBox(
               height: 80,
               width: 80,
-              child: Image.asset(
-                img,
-                fit: BoxFit.contain,
-                width: double.infinity,
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.black.withOpacity(0.1),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Image.asset(img, fit: BoxFit.contain),
               ),
             ),
+
             const Gap(20),
             Text(
               title,

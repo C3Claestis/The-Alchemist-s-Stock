@@ -1,67 +1,27 @@
+import 'package:alchemiststock/model/category.dart';
 import 'package:alchemiststock/widget/widget_batchProduct.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FindproductPage extends StatefulWidget {
-  const FindproductPage({super.key});
+  final List<CategoryModel> categories;
+  const FindproductPage({super.key, required this.categories});
 
   @override
   State<FindproductPage> createState() => _FindproductPageState();
 }
 
 class _FindproductPageState extends State<FindproductPage> {
-  final List<Map<String, dynamic>> products = [
-    {
-      "title": "Arcane Microscope",
-      "img": "assets/images/product/peti.png",
-      "color": Colors.blue,
-    },
-    {
-      "title": "Spirit Vial",
-      "img": "assets/images/product/Kue.png",
-      "color": Colors.green,
-    },
-    {
-      "title": "Elixir Mixer",
-      "img": "assets/images/product/Potion.png",
-      "color": Colors.brown,
-    },
-    {
-      "title": "Soul Condenser",
-      "img": "assets/images/product/Santet.png",
-      "color": Colors.yellow.shade400,
-    },
-    {
-      "title": "Runic Burner",
-      "img": "assets/images/product/Skell.png",
-      "color": Colors.purple,
-    },
-    {
-      "title": "Ethereal Funnel",
-      "img": "assets/images/product/Ilu.png",
-      "color": Colors.orange,
-    },
-    {
-      "title": "Elemental Extractor",
-      "img": "assets/images/product/Pulu1.png",
-      "color": Colors.red,
-    },
-    {
-      "title": "Cauldron of Transmutation",
-      "img": "assets/images/product/Cekerayam.png",
-      "color": Colors.cyan,
-    },
-    {
-      "title": "Alembic",
-      "img": "assets/images/product/Star.png",
-      "color": Colors.greenAccent,
-    },
-    {
-      "title": "Mana Conductor",
-      "img": "assets/images/product/lilin.png",
-      "color": Colors.blueGrey,
-    },
+  final List<Color> colors = [
+    Colors.blue,
+    Colors.green,
+    Colors.brown,
+    Colors.yellow,
+    Colors.purple,
+    Colors.orange,
+    Colors.red,
+    Colors.cyan,
   ];
 
   @override
@@ -84,17 +44,18 @@ class _FindproductPageState extends State<FindproductPage> {
       child: SizedBox(
         width: 364,
         child: GridView.builder(
-          itemCount: products.length,
+          itemCount: widget.categories.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, // grid 2 kolom
             crossAxisSpacing: 15,
             mainAxisSpacing: 15,
           ),
           itemBuilder: (context, index) {
+            final category = widget.categories[index];
             return BatchProduct(
-              title: products[index]["title"],
-              img: products[index]["img"],
-              coloring: products[index]["color"],
+              title: category.name,
+              img: "assets/images/batch/${category.name}.png",
+              coloring: colors[index % colors.length], // looping warna
             );
           },
         ),
