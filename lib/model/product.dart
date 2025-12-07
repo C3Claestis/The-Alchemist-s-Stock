@@ -17,9 +17,9 @@ class ProductModel {
     required this.price,
     required this.lore,
     required this.quantity,
-    required this.description,    
+    required this.description,
     required this.unit,
-    this.count = 1
+    this.count = 1,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -33,5 +33,19 @@ class ProductModel {
       description: json['description'],
       unit: json['unit'] ?? "",
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "name": name,
+      "description": description,
+      "category": category,
+      "price": price,
+      "lore": lore,
+      "quantity": quantity,
+      "unit": unit,
+      "count": count,
+    };
   }
 }

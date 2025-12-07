@@ -4,11 +4,30 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class FavouritePage extends StatelessWidget {
+class FavouritePage extends StatefulWidget {
   const FavouritePage({super.key});
 
   @override
+  State<FavouritePage> createState() => _FavouritePageState();
+}
+
+class _FavouritePageState extends State<FavouritePage> {
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    await FavouriteService.loadFavourites();
+    setState(() {});
+  }
+  
+  @override
   Widget build(BuildContext context) {
+    final favouriteItems = FavouriteService.items;
+
     return SafeArea(
       child: Column(
         children: [
@@ -16,15 +35,34 @@ class FavouritePage extends StatelessWidget {
           const Gap(32),
           Divider(height: 1),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: FavouriteService.items.map((p) {
-                    return FavouriteProduct(product: p);
-                  }).toList(),
-              ),
-            ),
+            child: favouriteItems.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/Chixia_sticker.png',
+                          width: 150,
+                          height: 150,
+                        ),
+                        Text(
+                          "You have no favourite items",
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: favouriteItems.length,
+                    itemBuilder: (context, index) =>
+                        FavouriteProduct(product: favouriteItems[index]),
+                  ),
           ),
-          _buttonSubmit(context),
+          if (favouriteItems.isNotEmpty) _buttonSubmit(context),
           const Gap(24),
         ],
       ),

@@ -1,12 +1,16 @@
 import 'package:alchemiststock/model/category.dart';
+import 'package:alchemiststock/model/product.dart';
 import 'package:alchemiststock/page/Content/productcategory_page.dart';
+import 'package:alchemiststock/services/_product_service.dart';
 import 'package:alchemiststock/widget/widget_batchProduct.dart';
+import 'package:alchemiststock/widget/widget_product_sell.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FindproductPage extends StatefulWidget {
   final List<CategoryModel> categories;
+
   const FindproductPage({super.key, required this.categories});
 
   @override
@@ -25,6 +29,30 @@ class _FindproductPageState extends State<FindproductPage> {
     Colors.cyan,
   ];
 
+  List<ProductModel> allProducts = [];
+  List<ProductModel> filteredProducts = [];
+
+  String query = "";
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadProducts();
+  }
+
+  Future<void> loadProducts() async {
+    try {
+      final products = await ProductService().getProducts();
+      setState(() {
+        allProducts = products;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -34,42 +62,110 @@ class _FindproductPageState extends State<FindproductPage> {
           const Gap(30),
           _searchBar(),
           const Gap(20),
-          _content(),
+          isLoading ? _loading() : _content(),
         ],
       ),
     );
   }
 
+  // ------------------------
+  //      SEARCH BAR
+  // ------------------------
+  Container _searchBar() {
+    return Container(
+      width: 364,
+      height: 52,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF2F3F2),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.search, color: Colors.black),
+          const SizedBox(width: 8),
+          Expanded(
+            child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  query = value;
+
+                  filteredProducts = allProducts
+                      .where((p) => p.name.toLowerCase().contains(value.toLowerCase()))
+                      .toList();
+                });
+              },
+              decoration: const InputDecoration(
+                hintText: "Search item...",
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ------------------------
+  //       MAIN CONTENT
+  // ------------------------
   Expanded _content() {
+    // ➤ Tidak sedang search → tampil kategori
+    if (query.isEmpty) {
+      return Expanded(
+        child: SizedBox(
+          width: 364,
+          child: GridView.builder(
+            itemCount: widget.categories.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 15,
+            ),
+            itemBuilder: (context, index) {
+              final category = widget.categories[index];
+              return BatchProduct(
+                title: category.name,
+                img: "assets/images/batch/${category.name}.png",
+                coloring: colors[index % colors.length],
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProductcategoryPage(category: category),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      );
+    }
+
+    // ➤ Sedang search → tampilkan produk
     return Expanded(
       child: SizedBox(
         width: 364,
         child: GridView.builder(
-          itemCount: widget.categories.length,
+          itemCount: filteredProducts.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // grid 2 kolom
+            crossAxisCount: 2,
             crossAxisSpacing: 15,
             mainAxisSpacing: 15,
+            childAspectRatio: 0.7,
           ),
           itemBuilder: (context, index) {
-            final category = widget.categories[index];
-            return BatchProduct(
-              title: category.name,
-              img: "assets/images/batch/${category.name}.png",
-              coloring: colors[index % colors.length], // looping warna
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => ProductcategoryPage(category: category)),
-                );
-              },
-            );
+            return ProductSell(product: filteredProducts[index]);
           },
         ),
       ),
     );
   }
 
+  // ------------------------
+  //      HEADER
+  // ------------------------
   Row _header() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -86,28 +182,13 @@ class _FindproductPageState extends State<FindproductPage> {
     );
   }
 
-  Container _searchBar() {
-    return Container(
-      width: 364,
-      height: 52,
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: Color(0xFFF2F3F2),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.search, color: Color.fromARGB(255, 0, 0, 0)),
-          SizedBox(width: 8),
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "Search item...",
-                border: InputBorder.none,
-              ),
-            ),
-          ),
-        ],
+  // ------------------------
+  //     LOADING SCREEN
+  // ------------------------
+  Widget _loading() {
+    return const Expanded(
+      child: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }

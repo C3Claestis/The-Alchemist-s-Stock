@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, prefer_interpolation_to_compose_strings
+// ignore_for_file: deprecated_member_use, prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
 import 'dart:ui';
 import 'package:alchemiststock/model/product.dart';
@@ -196,25 +196,27 @@ class _ProductdetailPageState extends State<ProductdetailPage> {
           Padding(
             padding: const EdgeInsets.only(bottom: 24.0),
             child: IconButton(
-              onPressed: () {
-                // Toggle status favorit
-                FavouriteService.toggleFavourite(widget.product);
+              onPressed: () async {
+                await FavouriteService.toggleFavourite(widget.product);
 
-                // Perbarui state untuk mengubah warna ikon
                 setState(() {
                   _isFavourite = !_isFavourite;
                 });
 
-                // Tampilkan notifikasi
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(
-                    content: Text(_isFavourite
-                        ? "Added to favourites!"
-                        : "Removed from favourites!")));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      _isFavourite
+                          ? "Added to favourites!"
+                          : "Removed from favourites!",
+                    ),
+                  ),
+                );
               },
-              icon: SvgPicture.asset('assets/svgs/heart.svg',
-                  color: _isFavourite ? Colors.red : null),
+              icon: SvgPicture.asset(
+                'assets/svgs/heart.svg',
+                color: _isFavourite ? Colors.red : null,
+              ),
             ),
           ),
         ],
