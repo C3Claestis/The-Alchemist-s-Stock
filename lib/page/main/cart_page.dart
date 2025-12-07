@@ -27,24 +27,46 @@ class _CartPageState extends State<CartPage> {
           const Gap(32),
           Divider(height: 1),
           Expanded(
-            child: ListView.builder(
-              itemCount: cart.length,
-              itemBuilder: (context, index) {
-                return CartProduct(
-                  product: cart[index],
-                  onRemove: () {
-                    setState(() {
-                      CartService.removeFromCart(cart[index]);
-                    });
-                  },
-                  onCountChanged: (newCount) {
-                    setState(() {}); // rebuild CartPage agar total price update
-                  },
-                );
-              },
-            ),
+            child: cart.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/Rover_sticker.png', 
+                          width: 150,
+                          height: 150,
+                        ),                        
+                        Text(
+                          "Your cart is empty",
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: cart.length,
+                    itemBuilder: (context, index) {
+                      return CartProduct(
+                        product: cart[index],
+                        onRemove: () {
+                          setState(() {
+                            CartService.removeFromCart(cart[index]);
+                          });
+                        },
+                        onCountChanged: (newCount) {
+                          setState(() {}); // update total price
+                        },
+                      );
+                    },
+                  ),
           ),
-          _buttonSubmit(context),
+          if (cart.isNotEmpty)
+            _buttonSubmit(context), // hanya tampil jika ada item
           const Gap(24),
         ],
       ),

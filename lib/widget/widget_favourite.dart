@@ -1,17 +1,20 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:alchemiststock/model/product.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FavouriteProduct extends StatelessWidget {
-  const FavouriteProduct({super.key});
+  final ProductModel product;
+
+  const FavouriteProduct({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       splashColor: Colors.grey.withOpacity(0.3),
-      highlightColor: Colors.grey.withOpacity(0.15),     
+      highlightColor: Colors.grey.withOpacity(0.15),
       onTap: () {
         // aksi ketika ditekan
       },
@@ -28,7 +31,7 @@ class FavouriteProduct extends StatelessWidget {
                     width: 72,
                     height: 72,
                     child: Image.asset(
-                      'assets/images/product/peti.png',
+                      'assets/images/product/${product.id}.png',
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -38,26 +41,28 @@ class FavouriteProduct extends StatelessWidget {
                       height: 100,
                       child: Row(
                         children: [
-                          RichText(
-                            text: TextSpan(
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                TextSpan(
-                                  text: 'Chisasa',
+                                Text(
+                                  product.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.poppins(
                                     fontSize: 16,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w700,
                                   ),
-                                  children: [
-                                    TextSpan(
-                                      text: '\n1pcs, Price',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        color: Colors.grey.shade700,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                  ],
+                                ),
+                                Text(
+                                  '${product.quantity}${product.unit}, Price',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade700,
+                                    letterSpacing: 0.5,
+                                  ),
                                 ),
                               ],
                             ),
@@ -66,7 +71,7 @@ class FavouriteProduct extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(right: 12),
                             child: Text(
-                              '\$4.99',
+                              '\$${product.price}',
                               style: GoogleFonts.roboto(
                                 fontSize: 16,
                                 color: Colors.black,

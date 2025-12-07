@@ -1,3 +1,4 @@
+import 'package:alchemiststock/services/_favourite_service.dart';
 import 'package:alchemiststock/widget/widget_favourite.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -17,14 +18,9 @@ class FavouritePage extends StatelessWidget {
           Expanded(
             child: SingleChildScrollView(
               child: Column(
-                children: [
-                FavouriteProduct(),
-                FavouriteProduct(),
-                FavouriteProduct(),
-                FavouriteProduct(),
-                FavouriteProduct(),
-                FavouriteProduct(),
-                ],
+                children: FavouriteService.items.map((p) {
+                    return FavouriteProduct(product: p);
+                  }).toList(),
               ),
             ),
           ),

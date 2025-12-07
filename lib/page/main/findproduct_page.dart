@@ -1,4 +1,5 @@
 import 'package:alchemiststock/model/category.dart';
+import 'package:alchemiststock/page/Content/productcategory_page.dart';
 import 'package:alchemiststock/widget/widget_batchProduct.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -56,6 +57,12 @@ class _FindproductPageState extends State<FindproductPage> {
               title: category.name,
               img: "assets/images/batch/${category.name}.png",
               coloring: colors[index % colors.length], // looping warna
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => ProductcategoryPage(category: category)),
+                );
+              },
             );
           },
         ),

@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:alchemiststock/model/product.dart';
 import 'package:alchemiststock/services/_CustomExpand.dart';
 import 'package:alchemiststock/services/_cart_service.dart';
+import 'package:alchemiststock/services/_favourite_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -20,6 +21,14 @@ class ProductdetailPage extends StatefulWidget {
 
 class _ProductdetailPageState extends State<ProductdetailPage> {
   int _count = 1;
+  late bool _isFavourite;
+
+  @override
+  void initState() {
+    super.initState();
+    // Cek status favorit saat halaman pertama kali dibuka
+    _isFavourite = FavouriteService.isFavourite(widget.product);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -187,8 +196,25 @@ class _ProductdetailPageState extends State<ProductdetailPage> {
           Padding(
             padding: const EdgeInsets.only(bottom: 24.0),
             child: IconButton(
-              onPressed: () {},
-              icon: SvgPicture.asset('assets/svgs/heart.svg'),
+              onPressed: () {
+                // Toggle status favorit
+                FavouriteService.toggleFavourite(widget.product);
+
+                // Perbarui state untuk mengubah warna ikon
+                setState(() {
+                  _isFavourite = !_isFavourite;
+                });
+
+                // Tampilkan notifikasi
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(
+                    content: Text(_isFavourite
+                        ? "Added to favourites!"
+                        : "Removed from favourites!")));
+              },
+              icon: SvgPicture.asset('assets/svgs/heart.svg',
+                  color: _isFavourite ? Colors.red : null),
             ),
           ),
         ],

@@ -8,23 +8,20 @@ class BatchProduct extends StatelessWidget {
   final String title;
   final String img;
   final Color coloring;
+  final VoidCallback? onTap;
 
   const BatchProduct({
     super.key,
     required this.title,
     required this.img,
     required this.coloring,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      splashColor: coloring.withOpacity(0.3),
-      highlightColor: coloring.withOpacity(0.15),
-      borderRadius: BorderRadius.circular(16),
-      onTap: () {
-        // aksi ketika ditekan
-      },
+      onTap: onTap,
       child: Container(
         width: 175,
         height: 190,
