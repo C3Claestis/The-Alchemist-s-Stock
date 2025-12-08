@@ -1,3 +1,4 @@
+import 'package:alchemiststock/page/Content/about_page.dart';
 import 'package:alchemiststock/widget/widget_account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,19 +14,51 @@ class AccountPage extends StatelessWidget {
       child: Column(
         children: [
           _header(),
-          Divider(height: 1),
-          const Gap(10),
-          Column(
-            children: [
-              AccountProduct(path: "orders", name: "Orders"),
-              AccountProduct(path: "mydetail", name: "My Details"),
-              AccountProduct(path: "pointermap", name: "Delivery Address"),
-              AccountProduct(path: "paymethod", name: "Payment Methods"),
-              AccountProduct(path: "promocard", name: "Promo Card"),
-              AccountProduct(path: "notif", name: "Notifications"),
-              AccountProduct(path: "help", name: "Help & Support"),
-              AccountProduct(path: "about", name: "About"),
-            ],
+          const Divider(height: 1),
+          Expanded(
+            child: ListView(
+              children: [
+                AccountProduct(path: "orders", name: "Orders", onTap: null),
+                AccountProduct(
+                  path: "mydetail",
+                  name: "My Details",
+                  onTap: null,
+                ),
+                AccountProduct(
+                  path: "pointermap",
+                  name: "Delivery Address",
+                  onTap: null,
+                ),
+                AccountProduct(
+                  path: "paymethod",
+                  name: "Payment Methods",
+                  onTap: null,
+                ),
+                AccountProduct(
+                  path: "promocard",
+                  name: "Promo Card",
+                  onTap: null,
+                ),
+                AccountProduct(
+                  path: "notif",
+                  name: "Notifications",
+                  onTap: null,
+                ),
+                AccountProduct(
+                  path: "help",
+                  name: "Help & Support",
+                  onTap: null,
+                ),
+                AccountProduct(
+                  path: "about",
+                  name: "About",
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => AboutPage()),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
