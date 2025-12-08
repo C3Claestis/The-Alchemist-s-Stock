@@ -6,8 +6,7 @@ class CartService {
   // Menambahkan item ke cart
   static void addToCart(ProductModel product, {int count = 1}) {
     // Cek apakah produk sudah ada di cart berdasarkan id
-    final existingIndex =
-        cartItems.indexWhere((item) => item.id == product.id);
+    final existingIndex = cartItems.indexWhere((item) => item.id == product.id);
 
     if (existingIndex != -1) {
       // Jika sudah ada, update count
@@ -44,5 +43,10 @@ class CartService {
       total += item.price * item.count;
     }
     return total;
+  }
+
+  // 🔥 Fungsi baru untuk mengosongkan keranjang
+  static void clearCart() {
+    cartItems.clear();
   }
 }

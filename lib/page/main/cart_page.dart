@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:alchemiststock/page/Content/ordercomplete_page.dart';
 import 'package:alchemiststock/page/RegisterLoginPage/privacyPolicy_page.dart';
 import 'package:alchemiststock/page/RegisterLoginPage/termservice_page.dart';
 import 'package:alchemiststock/services/_cart_service.dart';
@@ -23,7 +24,7 @@ class _CartPageState extends State<CartPage> {
   double _calculateTotalPrice() {
     return cart.fold(0.0, (sum, item) => sum + (item.price * item.count));
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -452,8 +453,14 @@ class _CartPageState extends State<CartPage> {
 
   ElevatedButton _btnCheckout(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        Navigator.pop(context);
+      onPressed: () {        
+        CartService.clearCart();
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const OrdercompletePage()),
+          (Route<dynamic> route) => false, // Hapus semua route
+        );
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF53B175),
