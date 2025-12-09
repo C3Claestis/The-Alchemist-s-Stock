@@ -1,13 +1,19 @@
 import 'package:alchemiststock/page/RegisterLoginPage/splashscreen_page.dart';
 import 'package:alchemiststock/services/_favourite_service.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
-  // Muat file .env
-  await dotenv.load(fileName: "API_KEY.env"); 
+  // Pastikan binding sudah siap sebelum menjalankan kode plugin.
   WidgetsFlutterBinding.ensureInitialized();
-  await FavouriteService.loadFavourites();
+
+  // Jalankan proses inisialisasi yang tidak saling bergantung secara paralel.
+  await Future.wait([
+    dotenv.load(fileName: "API_KEY.env"),
+    Firebase.initializeApp(),
+    FavouriteService.loadFavourites(),
+  ]);
   
   runApp(const MainApp()); // Ganti MyApp dengan widget root aplikasi Anda
 }

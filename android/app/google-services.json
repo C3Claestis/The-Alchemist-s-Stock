@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "37857241766",
+    "project_id": "alchemist-shop-1bb1c",
+    "storage_bucket": "alchemist-shop-1bb1c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37857241766:android:dd332ff59c9972713ca267",
+        "android_client_info": {
+          "package_name": "com.example.alchemiststock"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC22Bmybpn7EBjfZ6FjDkNp2yv5rMMZp28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
