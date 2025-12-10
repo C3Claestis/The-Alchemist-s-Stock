@@ -1,20 +1,21 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, use_super_parameters
 
 import 'package:flutter/material.dart';
 
 class OtpInput extends StatefulWidget {
-  const OtpInput({super.key});
+  const OtpInput({Key? key}) : super(key: key);
 
   @override
-  State<OtpInput> createState() => _OtpInputState();
+  State<OtpInput> createState() => OtpInputState();
 }
 
-class _OtpInputState extends State<OtpInput> {
-  final List<TextEditingController> _controllers =
-      List.generate(4, (index) => TextEditingController());
+class OtpInputState extends State<OtpInput> {
+  final List<TextEditingController> _controllers = List.generate(
+    4,
+    (index) => TextEditingController(),
+  );
 
-  final List<FocusNode> _focusNodes =
-      List.generate(4, (index) => FocusNode());
+  final List<FocusNode> _focusNodes = List.generate(4, (index) => FocusNode());
 
   @override
   Widget build(BuildContext context) {
@@ -54,5 +55,9 @@ class _OtpInputState extends State<OtpInput> {
         );
       }),
     );
+  }
+
+  String getOtp() {
+    return _controllers.map((c) => c.text).join();
   }
 }

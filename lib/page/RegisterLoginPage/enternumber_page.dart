@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:alchemiststock/services/_authController.dart';
 
 class EnternumberPage extends StatefulWidget {
   final PhoneController controller;
@@ -18,6 +19,7 @@ class EnternumberPage extends StatefulWidget {
 
 class _EnternumberPageState extends State<EnternumberPage> {
   late PhoneController phoneCtrl;
+  String _completePhoneNumber = '';
 
   @override
   void initState() {
@@ -48,7 +50,7 @@ class _EnternumberPageState extends State<EnternumberPage> {
                 const Gap(26),
                 _instructionTxt(),
                 const Gap(10),
-                
+
                 IntlPhoneField(
                   controller: widget.controller.numberController,
                   initialCountryCode: 'ID',
@@ -60,7 +62,8 @@ class _EnternumberPageState extends State<EnternumberPage> {
                     ),
                   ),
                   onChanged: (phone) {
-                    phoneCtrl.onNumberChanged?.call(phone.completeNumber);
+                    // Simpan nomor lengkap dengan kode negara
+                    _completePhoneNumber = phone.completeNumber;
                   },
                 ),
 
@@ -81,7 +84,31 @@ class _EnternumberPageState extends State<EnternumberPage> {
       right: 24,
       child: ElevatedButton(
         onPressed: () {
-          _goToNextPage();
+          if (_completePhoneNumber.isEmpty || widget.controller.numberController.text.trim().isEmpty) {
+            print("Nomor tidak boleh kosong");
+            return;
+          }
+          AuthController.sendOtp(
+            phoneNumber: _completePhoneNumber,
+            onCodeSent: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => VerifnumberPage(phoneNumber: _completePhoneNumber),
+                ),
+              );
+            },
+            onError: (msg) {
+              // Tampilkan pesan error kepada pengguna
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to send OTP: $msg'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              print("ERROR: $msg"); // Tetap log untuk debug
+            },
+          );          
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF53B175),
@@ -121,13 +148,6 @@ class _EnternumberPageState extends State<EnternumberPage> {
     return GestureDetector(
       onTap: () => Navigator.pop(context),
       child: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black),
-    );
-  }
-
-  void _goToNextPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const VerifnumberPage()),
     );
   }
 }

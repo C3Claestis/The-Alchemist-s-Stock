@@ -12,7 +12,20 @@
           "package_name": "com.example.alchemiststock"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "37857241766-elthfk69g1jc61373uf6el2ri9p1hne3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.alchemiststock",
+            "certificate_hash": "15c19d1341b29e1302e2e138cd475c77975c942e"
+          }
+        },
+        {
+          "client_id": "37857241766-9t49r5ce7bc63mb3om8e07b7mneusvks.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC22Bmybpn7EBjfZ6FjDkNp2yv5rMMZp28"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "37857241766-9t49r5ce7bc63mb3om8e07b7mneusvks.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "37857241766-341l1v3flqd34nnvivq0jvgudros0tu1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.alchemiststock"
+              }
+            }
+          ]
         }
       }
     }
