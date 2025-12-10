@@ -1,10 +1,11 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'package:alchemiststock/page/RegisterLoginPage/signin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -59,7 +60,10 @@ class OnboardingPage extends StatelessWidget {
               ),
               const Gap(48),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  prefs.setBool("onboarding_done", true);
+
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (_) => const SigninPage()),

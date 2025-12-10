@@ -1,11 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:alchemiststock/page/RegisterLoginPage/login_page.dart';
+import 'package:alchemiststock/services/_mainNavigationPage.dart';
 import 'package:alchemiststock/widget/widget_template_sigin.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SelectlocationPage extends StatefulWidget {
   const SelectlocationPage({super.key});
@@ -29,6 +31,28 @@ class SelectlocationPageState extends State<SelectlocationPage> {
     "Bali": ["Denpasar", "Tabanan", "Kuta"],
     "NTT/NTB": ["Kupang", "Mataram", "Bima"],
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final prefs = await SharedPreferences.getInstance();
+
+    final savedZone = prefs.getString("user_zone");
+    final savedArea = prefs.getString("user_area");
+
+    // Jika user sudah login + sudah simpan lokasi → langsung ke Home
+    if (user != null && savedZone != null && savedArea != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MainNavigationPage()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,23 +100,30 @@ class SelectlocationPageState extends State<SelectlocationPage> {
       onPressed: () async {
         if (selectedZone.isEmpty || selectedArea.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Isi Zone dan Area terlebih dahulu"),
-              duration: Duration(seconds: 1),
-            ),
+            const SnackBar(content: Text("Isi Zone dan Area terlebih dahulu")),
           );
           return;
         }
 
-        // SIMPAN LOKASI KE LOCAL STORAGE
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("user_zone", selectedZone);
         await prefs.setString("user_area", selectedArea);
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const LoginPage()),
-        );
+        final user = FirebaseAuth.instance.currentUser;
+
+        if (user != null) {
+          // User sudah login → langsung ke Home
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const MainNavigationPage()),
+          );
+        } else {
+          // User belum login → ke LoginPage
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const LoginPage()),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF53B175),
@@ -137,11 +168,16 @@ class SelectlocationPageState extends State<SelectlocationPage> {
             contentPadding: const EdgeInsets.only(bottom: 12),
             suffixIcon: const Padding(
               padding: EdgeInsets.only(left: 8, bottom: 12),
-              child: Icon(Icons.keyboard_arrow_down_outlined,
-                  color: Color(0xFF7C7C7C), size: 24),
+              child: Icon(
+                Icons.keyboard_arrow_down_outlined,
+                color: Color(0xFF7C7C7C),
+                size: 24,
+              ),
             ),
-            suffixIconConstraints:
-                const BoxConstraints(minWidth: 0, minHeight: 0),
+            suffixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
             hintText: selectedZone.isEmpty
                 ? "Select zone first"
                 : "Types of your area",
@@ -184,11 +220,16 @@ class SelectlocationPageState extends State<SelectlocationPage> {
             contentPadding: const EdgeInsets.only(bottom: 12),
             suffixIcon: const Padding(
               padding: EdgeInsets.only(left: 8, bottom: 12),
-              child: Icon(Icons.keyboard_arrow_down_outlined,
-                  color: Color(0xFF7C7C7C), size: 24),
+              child: Icon(
+                Icons.keyboard_arrow_down_outlined,
+                color: Color(0xFF7C7C7C),
+                size: 24,
+              ),
             ),
-            suffixIconConstraints:
-                const BoxConstraints(minWidth: 0, minHeight: 0),
+            suffixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
             hintText: "Types of your zone",
             hintStyle: GoogleFonts.poppins(
               fontWeight: FontWeight.w500,

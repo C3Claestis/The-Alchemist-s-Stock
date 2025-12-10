@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:alchemiststock/page/RegisterLoginPage/login_page.dart';
 import 'package:alchemiststock/page/RegisterLoginPage/privacyPolicy_page.dart';
 import 'package:alchemiststock/page/RegisterLoginPage/termservice_page.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -29,6 +32,41 @@ class _SignupPageState extends State<SignupPage> {
     return regex.hasMatch(email);
   }
 
+  Future<void> registerUser() async {
+    try {
+      // 1. Daftar user ke Firebase
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          );
+
+      User? user = userCredential.user;
+
+      // 2. Kirim email verifikasi
+      await user?.sendEmailVerification();
+
+      // 3. Simpan username ke displayName
+      await user?.updateDisplayName(_usernameController.text);
+
+      showSuccessPopup(); // tampilkan popup sukses
+    } on FirebaseAuthException catch (e) {
+      String message = "";
+
+      if (e.code == 'email-already-in-use') {
+        message = "This email is already registered.";
+      } else if (e.code == 'weak-password') {
+        message = "Password must be at least 6 characters.";
+      } else {
+        message = e.message ?? "Sign Up failed, try again.";
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -41,66 +79,6 @@ class _SignupPageState extends State<SignupPage> {
     return _usernameController.text.isNotEmpty &&
         _passwordController.text.length >= 6 &&
         _isEmailValid;
-  }
-
-  void showSuccessPopup() {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // tidak bisa di-klik di luar
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.check_circle, color: Colors.green, size: 60),
-                const SizedBox(height: 16),
-                Text(
-                  "Sign Up Successful!",
-                  style: GoogleFonts.poppins(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  "Your account has been created.",
-                  style: GoogleFonts.poppins(fontSize: 14),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // tutup dialog
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LoginPage()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF53B175),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    child: Text(
-                      "Go to Sign In",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -144,6 +122,37 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  ElevatedButton _btnSignup(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        if (isAllValid()) {
+          await registerUser(); // panggil Firebase Sign Up
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Please complete all fields correctly"),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      },
+
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF53B175),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19)),
+        minimumSize: const Size(353, 67),
+      ),
+      child: Text(
+        'Sign Up',
+        style: GoogleFonts.urbanist(
+          fontSize: 18,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
   Row _goSignIn(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -176,36 +185,6 @@ class _SignupPageState extends State<SignupPage> {
           ),
         ),
       ],
-    );
-  }
-
-  ElevatedButton _btnSignup(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        if (isAllValid()) {
-          showSuccessPopup();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Please complete all fields correctly"),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF53B175),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19)),
-        minimumSize: const Size(353, 67),
-      ),
-      child: Text(
-        'Sign Up',
-        style: GoogleFonts.urbanist(
-          fontSize: 18,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
     );
   }
 
@@ -437,6 +416,66 @@ class _SignupPageState extends State<SignupPage> {
           Image.asset('assets/images/Witch_Hat.png', color: Colors.brown),
         ],
       ),
+    );
+  }
+
+   void showSuccessPopup() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // tidak bisa di-klik di luar
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 60),
+                const SizedBox(height: 16),
+                Text(
+                  "Sign Up Successful!",
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "Your account has been created.",
+                  style: GoogleFonts.poppins(fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // tutup dialog
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginPage()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF53B175),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    child: Text(
+                      "Go to Sign In",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

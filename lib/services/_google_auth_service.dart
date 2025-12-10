@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GoogleAuthService {
 
@@ -29,5 +30,12 @@ class GoogleAuthService {
       print("Google Sign-In error: $e");
       return null;
     }
+  }
+
+  Future saveUserInfo(User user) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("user_name", user.displayName ?? "");
+    prefs.setString("user_email", user.email ?? "");
+    prefs.setString("user_photo", user.photoURL ?? "");
   }
 }

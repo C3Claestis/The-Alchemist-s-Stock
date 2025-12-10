@@ -1,12 +1,47 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:alchemiststock/page/Content/about_page.dart';
+import 'package:alchemiststock/page/RegisterLoginPage/signin_page.dart';
 import 'package:alchemiststock/widget/widget_account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AccountPage extends StatelessWidget {
+class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
+
+  @override
+  State<AccountPage> createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
+  String userName = "";
+  String userEmail = "";
+  String userPhoto = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString("user_name") ?? "Guest User";
+      userEmail = prefs.getString("user_email") ?? "No email";
+      userPhoto = prefs.getString("user_photo") ?? "";
+    });
+  }
+
+  Future<void> logoutGoogle() async {
+    await GoogleSignIn().signOut(); // Logout dari Google
+    await FirebaseAuth.instance.signOut(); // Logout Firebase
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +107,9 @@ class AccountPage extends StatelessWidget {
         children: [
           CircleAvatar(
             maxRadius: 32,
-            backgroundImage: AssetImage('assets/images/Chisa.jpeg'),
+            backgroundImage: userPhoto.isNotEmpty
+                ? NetworkImage(userPhoto)
+                : const AssetImage('assets/images/Chisa.jpeg') as ImageProvider,
           ),
           const Gap(20),
           Column(
@@ -83,7 +120,7 @@ class AccountPage extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Chisasa',
+                      text: userName,
                       style: GoogleFonts.poppins(
                         fontSize: 20,
                         color: Colors.black,
@@ -93,13 +130,22 @@ class AccountPage extends StatelessWidget {
                     WidgetSpan(
                       alignment: PlaceholderAlignment.middle,
                       child: GestureDetector(
-                        onTap: () {
-                          // aksi klik
+                        onTap: () async {
+                          await logoutGoogle(); // panggil logout
+
+                          // setelah logout, arahkan ke SigninPage
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (_) => SigninPage()),
+                            (route) => false,
+                          );
                         },
                         child: Padding(
-                          padding: EdgeInsets.only(left: 6, bottom: 8),
+                          padding: const EdgeInsets.only(left: 6, bottom: 8),
                           child: SvgPicture.asset(
                             'assets/svgs/edit.svg',
+                            // ignore: deprecated_member_use
+                            color: Colors.red,
                             width: 18,
                             height: 18,
                           ),
@@ -110,7 +156,7 @@ class AccountPage extends StatelessWidget {
                 ),
               ),
               Text(
-                'chisa1211@gmail.com',
+                userEmail,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: Colors.grey.shade700,

@@ -1,26 +1,17 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:alchemiststock/page/RegisterLoginPage/enternumber_page.dart';
+import 'package:alchemiststock/page/RegisterLoginPage/selectlocation_page.dart';
 import 'package:alchemiststock/services/_PhoneController.dart';
 import 'package:alchemiststock/services/_google_auth_service.dart';
-import 'package:alchemiststock/services/_mainNavigationPage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SigninPage extends StatelessWidget {
   const SigninPage({super.key});
-
-  Future saveUserInfo(User user) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString("user_name", user.displayName ?? "");
-    prefs.setString("user_email", user.email ?? "");
-    prefs.setString("user_photo", user.photoURL ?? "");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,15 +143,16 @@ class SigninPage extends StatelessWidget {
   ElevatedButton _googleButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        final user = await GoogleAuthService().signInWithGoogle();
+        final auth = GoogleAuthService();
+        final user = await auth.signInWithGoogle();
 
         if (user != null) {
-          await saveUserInfo(user);
+          await auth.saveUserInfo(user);
           // Berhasil Login
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) => MainNavigationPage(),
+              builder: (_) => SelectlocationPage(),
             ), // arahkan ke home
           );
         } else {
