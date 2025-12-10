@@ -6,7 +6,6 @@ import 'package:alchemiststock/widget/widget_template_sigin.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:alchemiststock/services/_authController.dart';
 
 class VerifnumberPage extends StatefulWidget {
   final String phoneNumber;
@@ -79,29 +78,12 @@ class _VerifnumberPageState extends State<VerifnumberPage> {
               children: [
                 TextButton(onPressed: () {}, child: const Text('Resend Code')),
                 ElevatedButton(
-                  onPressed: () async {
-                    final code = _otpInputKey.currentState?.getOtp() ??
-                        ""; // Ambil kode dari state
-
-                    AuthController.verifyOtp(
-                      code: code,
-                      onSuccess: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const SelectlocationPage(),
-                          ),
-                        );
-                      },
-                      onError: (msg) {
-                        // Tampilkan pesan error kepada pengguna
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Invalid OTP, please try again.'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      },
+                  onPressed: () async {             
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SelectlocationPage(),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(

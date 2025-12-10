@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:alchemiststock/page/RegisterLoginPage/login_page.dart';
 import 'package:alchemiststock/widget/widget_template_sigin.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectlocationPage extends StatefulWidget {
   const SelectlocationPage({super.key});
@@ -12,12 +15,26 @@ class SelectlocationPage extends StatefulWidget {
 }
 
 class SelectlocationPageState extends State<SelectlocationPage> {
+  // VALUE ZONE & AREA
+  String selectedZone = "";
+  String selectedArea = "";
+
+  // DATA ZONE DAN AREA (TERHUBUNG)
+  final Map<String, List<String>> zoneAreaMap = {
+    "Jawa": ["Jakarta", "Bandung", "Surabaya", "Semarang", "Jogja"],
+    "Sumatera": ["Medan", "Padang", "Pekanbaru", "Aceh"],
+    "Kalimantan": ["Pontianak", "Balikpapan", "Samarinda"],
+    "Sulawesi": ["Makassar", "Manado", "Palu"],
+    "Papua": ["Jayapura", "Merauke"],
+    "Bali": ["Denpasar", "Tabanan", "Kuta"],
+    "NTT/NTB": ["Kupang", "Mataram", "Bima"],
+  };
+
   @override
   Widget build(BuildContext context) {
     return TemplateSigin(
       child: Stack(
         children: [
-          // KONTEN UTAMA
           Positioned(
             top: 64,
             left: 20,
@@ -29,14 +46,19 @@ class SelectlocationPageState extends State<SelectlocationPage> {
                 const Gap(44),
                 _map(),
                 const Gap(120),
+
                 _yourZoneTxt(),
                 const Gap(8),
                 _inputYourZone(),
+
                 const Gap(30),
+
                 _yourAreaTxt(),
                 const Gap(8),
                 _inputYourArea(),
+
                 const Gap(30),
+
                 _buttonSubmit(context),
               ],
             ),
@@ -46,9 +68,27 @@ class SelectlocationPageState extends State<SelectlocationPage> {
     );
   }
 
+  // =============================
+  // BUTTON SUBMIT + VALIDASI + SAVE LOCAL
+  // =============================
   ElevatedButton _buttonSubmit(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
+        if (selectedZone.isEmpty || selectedArea.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Isi Zone dan Area terlebih dahulu"),
+              duration: Duration(seconds: 1),
+            ),
+          );
+          return;
+        }
+
+        // SIMPAN LOKASI KE LOCAL STORAGE
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("user_zone", selectedZone);
+        await prefs.setString("user_area", selectedArea);
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const LoginPage()),
@@ -70,38 +110,50 @@ class SelectlocationPageState extends State<SelectlocationPage> {
     );
   }
 
-  TextField _inputYourArea() {
-    return TextField(
-      decoration: InputDecoration(
-        isDense: true,
-        contentPadding: EdgeInsets.only(bottom: 12),
+  // =============================
+  // INPUT AREA (DEPENDENT)
+  // =============================
+  Widget _inputYourArea() {
+    return GestureDetector(
+      onTap: () {
+        if (selectedZone.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Pilih Zone terlebih dahulu"),
+              duration: Duration(seconds: 1),
+            ),
+          );
+          return;
+        }
 
-        // ICON DI KANAN
-        suffixIcon: Padding(
-          padding: EdgeInsets.only(left: 8, bottom: 12),
-          child: Icon(
-            Icons.keyboard_arrow_down_outlined,
-            color: Color(0xFF7C7C7C),
-            size: 24,
+        final items = zoneAreaMap[selectedZone] ?? [];
+        _showDropdown(items, true);
+      },
+      child: AbsorbPointer(
+        child: TextField(
+          controller: TextEditingController(text: selectedArea),
+          decoration: InputDecoration(
+            isDense: true,
+            contentPadding: const EdgeInsets.only(bottom: 12),
+            suffixIcon: const Padding(
+              padding: EdgeInsets.only(left: 8, bottom: 12),
+              child: Icon(Icons.keyboard_arrow_down_outlined,
+                  color: Color(0xFF7C7C7C), size: 24),
+            ),
+            suffixIconConstraints:
+                const BoxConstraints(minWidth: 0, minHeight: 0),
+            hintText: selectedZone.isEmpty
+                ? "Select zone first"
+                : "Types of your area",
+            hintStyle: GoogleFonts.poppins(
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+            enabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFE2E2E2)),
+            ),
           ),
-        ),
-
-        suffixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
-
-        hintText: "Types of your area",
-        hintStyle: GoogleFonts.poppins(
-          fontWeight: FontWeight.w500,
-          fontSize: 14,
-          color: Colors.grey,
-        ),
-
-        labelStyle: GoogleFonts.poppins(
-          fontWeight: FontWeight.w500,
-          color: Colors.black,
-        ),
-
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFFE2E2E2)),
         ),
       ),
     );
@@ -118,37 +170,35 @@ class SelectlocationPageState extends State<SelectlocationPage> {
     );
   }
 
-  TextField _inputYourZone() {
-    return TextField(
-      decoration: InputDecoration(
-        isDense: true,
-        contentPadding: EdgeInsets.only(bottom: 12),
-
-        // ICON DI KANAN
-        suffixIcon: Padding(
-          padding: EdgeInsets.only(left: 8, bottom: 12),
-          child: Icon(
-            Icons.keyboard_arrow_down_outlined,
-            color: Color(0xFF7C7C7C),
-            size: 24,
+  // =============================
+  // INPUT ZONE
+  // =============================
+  Widget _inputYourZone() {
+    return GestureDetector(
+      onTap: () => _showDropdown(zoneAreaMap.keys.toList(), false),
+      child: AbsorbPointer(
+        child: TextField(
+          controller: TextEditingController(text: selectedZone),
+          decoration: InputDecoration(
+            isDense: true,
+            contentPadding: const EdgeInsets.only(bottom: 12),
+            suffixIcon: const Padding(
+              padding: EdgeInsets.only(left: 8, bottom: 12),
+              child: Icon(Icons.keyboard_arrow_down_outlined,
+                  color: Color(0xFF7C7C7C), size: 24),
+            ),
+            suffixIconConstraints:
+                const BoxConstraints(minWidth: 0, minHeight: 0),
+            hintText: "Types of your zone",
+            hintStyle: GoogleFonts.poppins(
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+            enabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFE2E2E2)),
+            ),
           ),
-        ),
-
-        suffixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
-
-        hintText: "Types of your zone",
-        hintStyle: GoogleFonts.poppins(
-          fontWeight: FontWeight.w500,
-          fontSize: 14,
-          color: Colors.grey,
-        ),
-
-        labelStyle: GoogleFonts.poppins(
-          fontWeight: FontWeight.w500,
-          color: Colors.black,
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFFE2E2E2)),
         ),
       ),
     );
@@ -165,6 +215,9 @@ class SelectlocationPageState extends State<SelectlocationPage> {
     );
   }
 
+  // =============================
+  // BACK BUTTON
+  // =============================
   GestureDetector _backArrow(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.pop(context),
@@ -172,6 +225,9 @@ class SelectlocationPageState extends State<SelectlocationPage> {
     );
   }
 
+  // =============================
+  // MAP
+  // =============================
   SizedBox _map() {
     return SizedBox(
       width: double.maxFinite,
@@ -199,6 +255,44 @@ class SelectlocationPageState extends State<SelectlocationPage> {
           ),
         ],
       ),
+    );
+  }
+
+  // =============================
+  // DROPDOWN BOTTOM SHEET
+  // =============================
+  void _showDropdown(List<String> items, bool isArea) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return SizedBox(
+          height: 350,
+          child: ListView.separated(
+            itemCount: items.length,
+            separatorBuilder: (_, __) => const Divider(height: 1),
+            itemBuilder: (_, index) {
+              return ListTile(
+                title: Text(items[index]),
+                onTap: () {
+                  setState(() {
+                    if (isArea) {
+                      selectedArea = items[index];
+                    } else {
+                      selectedZone = items[index];
+                      selectedArea = ""; // reset jika zone berubah
+                    }
+                  });
+                  Navigator.pop(context);
+                },
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

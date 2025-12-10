@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomescreenPage extends StatefulWidget {
   const HomescreenPage({super.key});
@@ -20,9 +21,6 @@ class HomescreenPage extends StatefulWidget {
 class _HomescreenPageState extends State<HomescreenPage> {
   late Future<List<CategoryModel>> futureCategory;
   late Future<List<ProductModel>> futureProducts;
-
-  String zone = 'Jawa Barat';
-  String area = 'Bogor';
 
   final List<Color> categoryColors = [
     Color(0xFFEF5350), // Red
@@ -51,7 +49,15 @@ class _HomescreenPageState extends State<HomescreenPage> {
           children: [
             _logoIcon(),
             const Gap(8),
-            _locationHeader(),
+            FutureBuilder<Row>(
+              future: _locationHeader(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(); // Or any loading indicator
+                }
+                return snapshot.data ?? const Row(); // Return the Row or an empty Row if data is null
+              },
+            ),
             const Gap(18),
             _searchBar(),
             const Gap(20),
@@ -230,7 +236,11 @@ class _HomescreenPageState extends State<HomescreenPage> {
     );
   }
 
-  Row _locationHeader() {
+  Future<Row> _locationHeader() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String zone = prefs.getString("user_zone") ?? "";
+    String area = prefs.getString("user_area") ?? "";
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

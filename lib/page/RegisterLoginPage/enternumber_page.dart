@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:alchemiststock/services/_authController.dart';
 
 class EnternumberPage extends StatefulWidget {
   final PhoneController controller;
@@ -84,31 +83,20 @@ class _EnternumberPageState extends State<EnternumberPage> {
       right: 24,
       child: ElevatedButton(
         onPressed: () {
-          if (_completePhoneNumber.isEmpty || widget.controller.numberController.text.trim().isEmpty) {
+          if (_completePhoneNumber.isEmpty ||
+              widget.controller.numberController.text.trim().isEmpty) {
             print("Nomor tidak boleh kosong");
             return;
           }
-          AuthController.sendOtp(
-            phoneNumber: _completePhoneNumber,
-            onCodeSent: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => VerifnumberPage(phoneNumber: _completePhoneNumber),
-                ),
-              );
-            },
-            onError: (msg) {
-              // Tampilkan pesan error kepada pengguna
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Failed to send OTP: $msg'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              print("ERROR: $msg"); // Tetap log untuk debug
-            },
-          );          
+
+          // langsung lanjut tanpa OTP
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) =>
+                  VerifnumberPage(phoneNumber: _completePhoneNumber),
+            ),
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF53B175),

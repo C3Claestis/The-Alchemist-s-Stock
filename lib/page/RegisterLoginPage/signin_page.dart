@@ -1,13 +1,26 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:alchemiststock/page/RegisterLoginPage/enternumber_page.dart';
 import 'package:alchemiststock/services/_PhoneController.dart';
+import 'package:alchemiststock/services/_google_auth_service.dart';
+import 'package:alchemiststock/services/_mainNavigationPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SigninPage extends StatelessWidget {
   const SigninPage({super.key});
+
+  Future saveUserInfo(User user) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("user_name", user.displayName ?? "");
+    prefs.setString("user_email", user.email ?? "");
+    prefs.setString("user_photo", user.photoURL ?? "");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +45,8 @@ class SigninPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => EnternumberPage(controller: PhoneController()),
+                        builder: (_) =>
+                            EnternumberPage(controller: PhoneController()),
                       ),
                     );
                   },
@@ -69,7 +83,7 @@ class SigninPage extends StatelessWidget {
                 const Gap(40),
                 _sosmedConnectTxt(),
                 const Gap(38),
-                _googleButton(),
+                _googleButton(context),
                 const Gap(20),
                 _fbButton(),
               ],
@@ -135,9 +149,28 @@ class SigninPage extends StatelessWidget {
     );
   }
 
-  ElevatedButton _googleButton() {
+  ElevatedButton _googleButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () async {
+        final user = await GoogleAuthService().signInWithGoogle();
+
+        if (user != null) {
+          await saveUserInfo(user);
+          // Berhasil Login
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MainNavigationPage(),
+            ), // arahkan ke home
+          );
+        } else {
+          // gagal atau user batal
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Login Google dibatalkan atau gagal")),
+          );
+        }
+      },
+
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF5383EC),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19)),
