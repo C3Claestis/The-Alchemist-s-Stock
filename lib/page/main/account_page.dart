@@ -29,12 +29,37 @@ class _AccountPageState extends State<AccountPage> {
     _loadUserData();
   }
 
+  bool _isGoogleUser() {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) return false;
+
+    // cek provider login-nya
+    for (var info in user.providerData) {
+      if (info.providerId == "google.com" && info.photoURL != null) {
+        return true; // pengguna login Google
+      }
+    }
+    return false; // login email biasa
+  }
+
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
+    final user = FirebaseAuth.instance.currentUser;
+
     setState(() {
-      userName = prefs.getString("user_name") ?? "Guest User";
-      userEmail = prefs.getString("user_email") ?? "No email";
-      userPhoto = prefs.getString("user_photo") ?? "";
+      if (user != null) {
+        // Ambil dari Firebase user langsung
+        userName =
+            user.displayName ?? prefs.getString("user_name") ?? "Guest User";
+        userEmail = user.email ?? prefs.getString("user_email") ?? "No email";
+        userPhoto = user.photoURL ?? prefs.getString("user_photo") ?? "";
+      } else {
+        // fallback kalau tidak ada user login
+        userName = prefs.getString("user_name") ?? "Guest User";
+        userEmail = prefs.getString("user_email") ?? "No email";
+        userPhoto = prefs.getString("user_photo") ?? "";
+      }
     });
   }
 
@@ -107,10 +132,9 @@ class _AccountPageState extends State<AccountPage> {
         children: [
           CircleAvatar(
             maxRadius: 32,
-            backgroundImage: userPhoto.isNotEmpty
+            backgroundImage: _isGoogleUser()
                 ? NetworkImage(userPhoto)
-                : const AssetImage('assets/images/Chisa.jpeg') as ImageProvider,
-          ),
+                : const AssetImage('assets/images/Chisa.jpeg'),          ),
           const Gap(20),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,

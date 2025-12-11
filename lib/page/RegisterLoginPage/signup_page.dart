@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -48,6 +49,15 @@ class _SignupPageState extends State<SignupPage> {
 
       // 3. Simpan username ke displayName
       await user?.updateDisplayName(_usernameController.text);
+
+      // 4. Simpan data ke SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString("user_name", _usernameController.text.trim());
+      await prefs.setString("user_email", _emailController.text.trim());
+      await prefs.setString(
+        "user_photo",
+        "",
+      ); // tidak ada foto untuk signup biasa
 
       showSuccessPopup(); // tampilkan popup sukses
     } on FirebaseAuthException catch (e) {
@@ -419,7 +429,7 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-   void showSuccessPopup() {
+  void showSuccessPopup() {
     showDialog(
       context: context,
       barrierDismissible: false, // tidak bisa di-klik di luar
